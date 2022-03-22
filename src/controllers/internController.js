@@ -7,6 +7,7 @@ const intern = async function (req, res) {
     try {
     let input = req.body
     let email = input.email
+    let mobile = input.mobile
 
     if (!Object.keys(input).length > 0) return res.status(400).send({ error: "Please enter some data" })
 
@@ -19,22 +20,45 @@ const intern = async function (req, res) {
 
     if (!input.collegeId) return res.status(400).send({ error: "please enter College Id" })
 
+    const Email = input.email
+    const validateEmail = function(Email){
+        return /^[a-zA-Z0-9+_.-]+@[a-zA-Z.-]+$/.test(Email)
+    }
+    if(!validateEmail(Email)){
+        return res.status(400).send({error:"Please enter valid email"})
+    }
+
+    const Mobile = input.mobile
+    const validateMobile = function(Mobile){
+        return /^([+]\d{2})?\d{10}$/.test(mobile)
+    }
+    if(!validateMobile(Mobile)){
+        return res.status(400).send({error:"Please enter valid mobile"})
+    }
+
     let college = req.body.collegeId
     let collegeId = await collegeModel.findById(college)
 
-    let x = await collegeModel.findOne({ _id: collegeId, isDeleted: false })
-    if (!x) {
-        res.status(404).send({ msg: "college not found" })
+    if (!collegeId) return res.status(400).send({error:"please provide valid collegeId"})
+
+    let collegeAvailable = await collegeModel.findOne({ _id: collegeId, isDeleted: false })
+
+    if (!collegeAvailable) {
+        res.status(404).send({error: "college not found"})
     }
-    if (!collegeId) return res.status(400).send("please provide valid collegeId")
 
     const emailAlreadyUsed = await internModel.findOne({email})
 
     if(emailAlreadyUsed) return res.status(400).send({status: false, msg: "email already registered"})
 
+    
+    const mobileAlreadyUsed = await internModel.findOne({mobile})
+
+    if(mobileAlreadyUsed) return res.status(400).send({status: false, msg: "mobile already registered"})
+
 
     let data = await internModel.create(input)
-    res.status(400).send({ status: true, msg: data })
+    res.status(201).send({ status: true, msg: data })
 }
 catch (err) {
     console.log(err)
@@ -42,18 +66,7 @@ catch (err) {
 }
 }
 
-const collegeDetails = async function(req,res){
-    const data = req.query
 
-    if(!data) return res.status(400).send({error:"enter some data for filter"})
-
-    const interns = await internModel.find(data).find({ isDeleted: false}).populate("collegeId")
-
-    if (!interns) return res.status(404).send({ error: "No such data found" })
-
-    res.status(200).send({})
-}
 
 module.exports.intern = intern
 
-module.exports.collegeDetails = collegeDetails
