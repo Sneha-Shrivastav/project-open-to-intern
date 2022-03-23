@@ -30,7 +30,7 @@ const intern = async function (req, res) {
 
     const Mobile = mobile
     const validateMobile = function(Mobile){
-        return /^([+]\d{2})?\d{10}$/.test(mobile)
+        return /^([+]\d{2})?\d{10}$/.test(Mobile)
     }
     if(!validateMobile(Mobile)){
         return res.status(400).send({error:"Please enter valid mobile"})
