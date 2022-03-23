@@ -16,11 +16,11 @@ const intern = async function (req, res) {
 
     if (!input.email) return res.status(400).send({ error: "please enter email" })
 
-    if (!input.mobile) return res.status(400).send({ error: "please enter valid mobile number" })
+    if (!input.mobile) return res.status(400).send({ error: "please enter mobile number" })
 
     if (!input.collegeId) return res.status(400).send({ error: "please enter College Id" })
 
-    const Email = input.email
+    const Email = email
     const validateEmail = function(Email){
         return /^[a-zA-Z0-9+_.-]+@[a-zA-Z.-]+$/.test(Email)
     }
@@ -28,7 +28,7 @@ const intern = async function (req, res) {
         return res.status(400).send({error:"Please enter valid email"})
     }
 
-    const Mobile = input.mobile
+    const Mobile = mobile
     const validateMobile = function(Mobile){
         return /^([+]\d{2})?\d{10}$/.test(mobile)
     }

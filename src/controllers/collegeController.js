@@ -43,7 +43,9 @@ const collegeDetails = async function(req,res){
 
     let listOfIntern = await internModel.find({collegeId:id, isDeleted:false}).select({id:1, name:1, email:1, mobile:1})
 
-     let result = await collegeModel.find({_id:id})
+     let result = await collegeModel.find({_id:id ,isDeleted:false})
+
+    if(!(result).length>0) return res.status(400).send({error:"College deleted"})
 
     let obj = {
         name: result[0].name,
